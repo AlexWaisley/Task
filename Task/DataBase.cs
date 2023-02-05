@@ -6,49 +6,46 @@ namespace Task;
 public class DataBase
 {
     private string Path { get; set; }
-    public List<Person>? People { get; set; }
+    public UsersDbModel? People { get; set; }
 
     public DataBase(string path)
     {
         Path = path;
-        InitListOfPeople();
     }
 
-    private void InitListOfPeople()
+    public void Init()
     {
         if (File.Exists(Path))
         {
-            var peopleData = File.ReadAllText(Path);
-            People = JsonSerializer.Deserialize<List<Person>>(peopleData);
+            Load();
         }
         else
         {
-            People = new List<Person>
-            {
-                new Person("Ben", "pass", 24, "Male", "basketball"),
-                new Person("Alis", "longpass", 20, "Female", "shopping")
-            };
+            People.Persons.Add(new Person("Ben", "pass", 24, "Male", "basketball"));
+            People.Persons.Add(new Person("Alis", "longpass", 20, "Female", "shopping"));
         }
     }
 
-    public void ReadFromFile()
+    public void Load()
     {
-        People = JsonSerializer.Deserialize<List<Person>>(Path)!;
+        var peopleData = File.ReadAllText(Path);
+        People = JsonSerializer.Deserialize<UsersDbModel>(peopleData);
+    }
+    public void Save()
+    {
+        var s = JsonSerializer.Serialize(People);
+        File.WriteAllText(Path, s);
     }
 
     public Person GetUser(string name, string pass)
     {
-        if(IsUserExists(name,pass))
-            foreach (var person in People)
-            {
-                if (name == person.Name && pass == person.Password) return person;
-            }
+        if(IsUserExists(name,pass)) return People.Persons.FirstOrDefault(person => name == person.Name && pass == person.Password);
 
-        return new Person();
+        return null;
     }
 
     public bool IsUserExists(string name, string pass)
     {
-        return People.Any(person => name == person.Name && pass == person.Password);
+        return People.Persons.Any(person => name == person.Name && pass == person.Password);
     }
 }

@@ -8,7 +8,7 @@ public class Person
     public string PSex { get; }
     public string Hobby { get; }
     
-    public Person(string name = "Null", string password = "None", int age = 0, string pSex = "", string hobby = "")
+    public Person(string name, string password, int age, string pSex, string hobby)
     {
         Name = name;
         Age = age;
