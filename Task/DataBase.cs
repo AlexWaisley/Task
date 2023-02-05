@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
 
 namespace Task;
@@ -6,7 +7,7 @@ namespace Task;
 public class DataBase
 {
     private string Path { get; set; }
-    public UsersDbModel? People { get; set; } = new ();
+    public UsersDbModel? People { get; set; } = new();
 
     public DataBase(string path)
     {
@@ -29,8 +30,16 @@ public class DataBase
     public void Load()
     {
         var peopleData = File.ReadAllText(Path);
-        People = JsonSerializer.Deserialize<UsersDbModel>(peopleData);
+        try
+        {
+            People = JsonSerializer.Deserialize<UsersDbModel>(peopleData);
+        }
+        catch
+        {
+            throw new Exception("Invalid json");
+        }
     }
+
     public void Save()
     {
         var s = JsonSerializer.Serialize(People);
@@ -39,7 +48,8 @@ public class DataBase
 
     public Person GetUser(string name, string pass)
     {
-        if(IsUserExists(name,pass)) return People.Persons.FirstOrDefault(person => name == person.Name && pass == person.Password);
+        if (IsUserExists(name, pass))
+            return People.Persons.FirstOrDefault(person => name == person.Name && pass == person.Password);
 
         return null;
     }
