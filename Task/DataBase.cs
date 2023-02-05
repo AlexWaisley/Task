@@ -6,7 +6,7 @@ namespace Task;
 public class DataBase
 {
     private string Path { get; set; }
-    public UsersDbModel? People { get; set; }
+    public UsersDbModel? People { get; set; } = new ();
 
     public DataBase(string path)
     {
